@@ -111,7 +111,7 @@ O método Welcome é executado e retorna a cadeia de caracteres This is the Welc
 
 ![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/315e6c8e-98bc-4f02-87f5-aca797eeb8ab)
 
-Modifique o código para passar algumas informações de parâmetro da URL para o controlador. Por exemplo, /HelloWorld/Welcome?name=Rick&numtimes=4.
+Modifique o código para passar algumas informações de parâmetro da URL para o controlador. Por exemplo, /HelloWorld/Welcome?name=Sandra&numtimes=4.
 
 Altere o método Welcome para incluir dois parâmetros, conforme mostrado no código a seguir.
 
@@ -128,7 +128,7 @@ O código anterior:
 Usa o recurso de parâmetro opcional do C# para indicar que o parâmetro numTimes usa 1 como padrão se nenhum valor é passado para esse parâmetro.
 Usa HtmlEncoder.Default.Encode para proteger o aplicativo contra entrada mal-intencionada, como através de JavaScript.
 Usa Cadeias de caracteres interpoladas em $"Hello {name}, NumTimes is: {numTimes}".
-Execute o aplicativo e navegue até: https://localhost:{PORT}/HelloWorld/Welcome?name=Rick&numtimes=4. Substitua {PORT} pelo número da porta.
+Execute o aplicativo e navegue até: https://localhost:{PORT}/HelloWorld/Welcome?name=Sandra&numtimes=4. Substitua {PORT} pelo número da porta.
 
 Experimente valores diferentes para name e numtimes na URL. O sistema de model binding do MVC mapeia automaticamente os parâmetros nomeados da cadeia de consulta para os parâmetros no método. Consulte Model binding para obter mais informações.
 
