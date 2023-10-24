@@ -132,7 +132,8 @@ Execute o aplicativo e navegue até: https://localhost:{PORT}/HelloWorld/Welcome
 
 Experimente valores diferentes para name e numtimes na URL. O sistema de model binding do MVC mapeia automaticamente os parâmetros nomeados da cadeia de consulta para os parâmetros no método. Consulte Model binding para obter mais informações.
 
-![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/12629aff-1c57-4921-a660-691bf007d6aa)
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/e9926dc6-0aba-47a9-a84d-0e0805613c44)
+
 
 Na imagem anterior:
 
