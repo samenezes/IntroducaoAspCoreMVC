@@ -1,273 +1,176 @@
-# Aula 03 Criar componente Container e Página 404
+# Adicione um modelo a um aplicativo ASP.NET Core MVC
 
-## Criar componente Container
+Neste tutorial, classes são adicionadas para o gerenciamento de filmes em um banco de dados.
+Essas classes serão a parte do “Modelo” parte do aplicativo MVC.
 
-1. Dentro da pasta `components` já tem a pasta `Container`
-2. Dentro dela temos 2 arquivos `index.jsx` e `Container.module.css`, se não tiver crie os dois.
-3. Abra o arquivo `index.jsx` e faça o seguinte código:
+Essas classes do modelo são usadas com o Entity Framework Core (EF Core) para trabalhar com um banco de dados. 
+O EF Core é uma estrutura ORM (mapeamento relacional de objetos) que simplifica o código de acesso a dados que você precisa escrever.
 
-~~~javascript
-import styles from './Container.module.css'
+As classes de modelo criadas são conhecidas como classes POCO , de Plain Old CLR Objects (Bons e velhos objetos do CLR).
+As classes POCO não têm nenhuma dependência em EF Core. 
+Elas definem as propriedades dos dados a serem armazenados no banco de dados.
 
-// eslint-disable-next-line react/prop-types
-function Container({ children }) {
-    return (
-        <section className={styles.container}>
-            {children}
-        </section>
-    )
+Neste tutorial, você escreve as classes de modelo primeiro e o EF Core cria o banco de dados.
+
+## Adicionar uma classe de modelo de dados
+
+Clique com o botão direito do mouse na pasta Modelos>Adicionar>Classe. Dê o nome Movie.cs para o arquivo.
+
+Atualize o arquivo Models/Movie.cs com o seguinte código:
+
+~~~c #
+using System.ComponentModel.DataAnnotations;
+
+namespace MvcMovie.Models;
+
+public class Movie
+{
+    public int Id { get; set; }
+    public string? Title { get; set; }
+    [DataType(DataType.Date)]
+    public DateTime ReleaseDate { get; set; }
+    public string? Genre { get; set; }
+    public decimal Price { get; set; }
 }
+~~~
 
-export default Container
+ A classe Movie contém um campo Id, que é exigido pelo banco de dados para a chave primária.
+ O atributo DataType em ReleaseDate especifica o tipo de dados (Date). Com esse atributo:
+ O usuário não precisa inserir informações de horário no campo de data.
+ Somente a data é exibida, não as informações de tempo.
+
+O ponto de interrogação após string indica que a propriedade permite valor nulo.
+
+## Adicionar pacotes do NuGet
+
+O Visual Studio instala automaticamente os pacotes necessários.
+
+Compile o projeto como uma verificação de erros do compilador.
+
+## Aplicar scaffold a páginas de filme
+
+Use a ferramenta scaffolding para produzir páginas CRUD (Create, Read, Update e Delete) para o modelo de filme.
+
+Clique com o botão direito do mouse na pasta Controladores do Gerenciador de Soluções e selecione Adicionar > Novo Item Gerado por Scaffolding.
+
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/da805019-d9b0-4d5b-b034-300378e6d4ae)
+
+No diálogo Adicionar novo item de Scaffold:
+
+No painel esquerdo, selecione Instalado>Comum>MVC.
+Selecione Controlador MVC com exibições, usando o Entity Framework.
+Selecione Adicionar.
+
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/b7475cf9-d1ce-4d1a-b10b-a26077cb24b1)
+
+Complete a caixa de diálogo Adicionar Controlador MVC com exibições, usando o Entity Framework:
+
+Na lista suspensa Classe de modelo, selecione Filme (MvcMovie.Models).
+Na linha Classe de contexto de dados, selecione o sinal + (adição).
+Na caixa de diálogo Adicionar Contexto de Dados , o nome da classe MvcMovie.Data.MvcMovieContext é gerado.
+Selecione Adicionar.
+Na lista suspensa Provedor de banco de dados, selecione SQL Server.
+Exibições e Nome do controlador: mantenha o padrão.
+Selecione Adicionar.
+
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/2cd37efd-a5ea-4a24-af71-ae5d3159faa9)
+
+Se você receber uma mensagem de erro, selecione Adicionar uma segunda vez para tentar novamente.
+
+
+O scaffolding adiciona os seguintes pacotes:
+
+Microsoft.EntityFrameworkCore.SqlServer
+Microsoft.EntityFrameworkCore.Tools
+Microsoft.VisualStudio.Web.CodeGeneration.Design
+O scaffolding cria o seguinte:
+
+Um controlador de filmes: Controllers/MoviesController.cs
+Razor exibir arquivos para páginas Criar, Excluir, Detalhes, Editar e Índice : Views/Movies/*.cshtml
+Uma classe de contexto de banco de dados: Data/MvcMovieContext.cs
+O scaffolding atualiza o seguinte:
+
+Insere as referências de pacote necessárias no arquivo de projeto MvcMovie.csproj.
+Registra o contexto do banco de dados no arquivo Program.cs.
+Adicionar uma cadeia de caracteres de conexão do banco de dados ao arquivo appsettings.json.
+A criação automática desses arquivos e atualizações de arquivos é conhecida como scaffolding.
+
+As páginas com scaffolding ainda não podem ser usadas porque o banco de dados não existe. Executar o aplicativo e selecionar o link Aplicativo de Filme resulta em uma mensagem de erro Não é possível abrir o banco de dados ou nenhuma tabela desse tipo: filme.
+
+Crie o aplicativo para verificar se não há erros.
+
+## Migração inicial
+
+Use o recurso EF CoreMigrações para criar o banco de dados.
+O recurso Migrações é um conjunto de ferramentas que cria e atualiza um banco de dados para corresponder ao modelo de dados.
+
+No menu Ferramentas, selecione Gerenciador de Pacotes NuGet>Console do Gerenciador de Pacotes.
+
+No PMC (Console do Gerenciador de Pacotes), Insira os seguintes comandos:
+
+~~~ powershell #
+
+Add-Migration InitialCreate
+Update-Database
 
 ~~~
 
-> O comentário //eslint-disable-next-line react/prop-types
-> serve para ignorar a necessidade de declarar as Props Types de children
-> Se, você quiser declarar elas, faça o import de PropTypes na parte de cima do componente:
-~~~javascript
-import PropTypes from 'prop-types'
+Add-Migration InitialCreate: gera um arquivo de migração Migrations/{timestamp}_InitialCreate.cs. O argumento InitialCreate é o nome da migração. Qualquer nome pode ser usado, mas, por convenção, um nome que descreve a migração é selecionado. Como essa é a primeira migração, a classe gerada contém o código para criar o esquema de banco de dados. O esquema de banco de dados é baseado no modelo especificado na classe MvcMovieContext.
 
+Update-Database: atualiza o banco de dados para a migração mais recente, que o comando anterior criou. Esse comando executa o método Up no arquivo Migrations/{time-stamp}_InitialCreate.cs, que cria o banco de dados.
+
+O comando Update-Database gera o seguinte aviso:
+
+Nenhum tipo foi especificado para a coluna decimal 'Preço' no tipo de entidade 'Filme'. Isso fará com que valores sejam truncados silenciosamente se não couberem na precisão e na escala padrão. Especifique explicitamente o tipo de coluna do SQL Server que pode acomodar todos os valores usando 'HasColumnType()'.
+
+Ignore o aviso anterior, ele é corrigido em um tutorial posterior.
+
+## Testar o aplicativo
+
+Execute o aplicativo e clique no link Aplicativo de Filme.
+
+Se você receber uma exceção semelhante à seguinte, talvez tenha perdido o comando Update-Database na etapa de migrações:
+
+~~~ console #
+SqlException: Cannot open database "MvcMovieContext-1" requested by the login. The login failed.
 ~~~
-> Depois, fora do return e antes do export default faça a declaração de propTypes:
-~~~javascript
-Container.propTypes = {
-  children: PropTypes.any
-}.isRequired
 
-~~~
+## Examinar a classe de contexto e o registro do banco de dados gerados
 
-### Referência de PropTypes
-https://legacy.reactjs.org/docs/typechecking-with-proptypes.html
+Com o EF Core, o acesso aos dados é executado usando um modelo. Um modelo é feito de classes de entidade e um objeto de contexto que representa uma sessão com o banco de dados. O objeto de contexto permite consultar e salvar dados. O contexto de banco de dados é derivado de Microsoft. EntityFrameworkCore.DbContext e especifica as entidades a serem incluídas no modelo de dados.
 
-## CSS do componente Container
+O scaffolding cria a classe de contexto do banco de dados Data/MvcMovieContext.cs:
 
-1. Abra o arquivo Container.module.css
-2. Faça o seguinte código:
+~~~ c #
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using MvcMovie.Models;
 
-~~~css
-.container {
-    width: 100%;
-    min-height: 90vh;
+namespace MvcMovie.Data
+{
+    public class MvcMovieContext : DbContext
+    {
+        public MvcMovieContext (DbContextOptions<MvcMovieContext> options)
+            : base(options)
+        {
+        }
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    padding-block: 1rem;
-    gap: 1rem;
+        public DbSet<MvcMovie.Models.Movie> Movie { get; set; }
+    }
 }
-
 ~~~
 
-3. Salve as alterações e feche o arquivo do css.
+O código anterior cria uma propriedade DbSet<Movie> que representa os filmes no banco de dados.
 
-## Como usar o componente Container
+## Injeção de dependência
 
-Vamos usar o componente Container em todas as páginas, para isto, vamos começar com a página Home.
+O ASP.NET Core foi criado com a DI (injeção de dependência). Serviços, como o contexto do banco de dados, são registrados com DI no Program.cs. Esses serviços são fornecidos aos componentes que necessitam deles através de parâmetros do construtor.
 
-1. Abra o arquivo `index.jsx` da página `Home`
-2. Selecione da linha 9 até 23, toda a section
-3. Recorte estas linhas (CTRL + X)
-4. Coloque o componente Container
-5. Cole (CTRL + V) entre as tags do componente Container as linhas que foram recortadas. Ficará assim o código:
+No arquivo Controllers/MoviesController.cs, o construtor usa a Injeção de Dependência para injetar o contexto do banco de dados MvcMovieContext no controlador. O contexto de banco de dados é usado em cada um dos métodos CRUD no controlador.
 
-~~~javascript
-<Container>
-  <section className="container">
-    <div className="apresentacao">
-        <p>
-            Olá, sou <br />
-            <span>Sandra Alves</span> <br />
-            Dev Full Stack
-        </p>
-        <Link to="/sobre" className="btn btn-red">
-            Saiba mais sobre mim
-        </Link>
-    </div>
-    <figure>
-        <img className="img-home" src="/developer-red.svg" alt="Imagem de Home" />
-    </figure>
-  </section>
-</Container>
+O scaffolding gerou o seguinte código realçado em Program.cs:
 
-~~~
-
-6. Faça o import do componente Container
-`import Container from '../../components/Container'`
-
-7. Salve e vejas a altearações no browser.
-
-## Ajustes no CSS da página Home
-
-1. Faça o import do css da página Home
-
-`import styles from './Home.module.css'`
-
-2. Vamos mudar a forma de utilização das classes com o CSS module. Mude a declaração de classes entre aspas por {styles.nome_da_classe} entre chaves. O código deverá ficar assim:
-
-~~~javascript
-<Container>
-  <section className={styles.home}>
-      <div className={styles.apresentacao}>
-          <p>
-              Olá, sou <br />
-              <span>Sandra Alves</span> <br />
-              Dev Full Stack
-          </p>
-          <Link to="/sobre" className={`${styles.btn} ${styles.btn_red}`}>
-              Saiba mais sobre mim
-          </Link>
-      </div>
-      <figure>
-          <img className={styles.img_home} src="/developer-red.svg" alt="Imagem de Home" />
-      </figure>
-  </section>
-</Container>
-~~~
-
-> Mudamos a class container da section para o nome 'home' para evitar ambiquidade com a classe cont
-
-## CSS de página Home
-
-1. Abra o arquivo `App.css`
-2. Selecione todo o código, recorte (CTRL + X)
-3. Abra o arquivo `Home.module.css`
-4. Cole nele todo o CSS que estava no arquivo App.css
-5. Faça alguns ajustes nos nomes das classes
-
-## Ajustes nas classes CSS de Home
-
-1. Mude os nomes das classes:
-1.1 A class '.container' mude para '.home'
-1.2 A class '.btn-red' mude para '.btn_red'
-2. Salve as alterações do CSS de Home, depois feche o arquivo.
-3. Veja o resultado no brouwer.
-
-## Utilizar o componente Container nas outras páginas
-
-1. Abra o arquivo index.jsx da página Sobre
-2. Mude a tag h1 para h2
-3. Recorte a linha da tag h2
-4. Coloque o componente Container
-5. Cole a linha da tag h2 entre as tags do Container. O código ficará assim:
-
-~~~javascript
-import Header from '../../components/Header'
-import Footer from '../../components/Footer'
-import Container from '../../components/Container'
-
-function Sobre() {
-    return (
-        <>
-            <Header />
-            <Container>
-                <h2>Sobre</h2>
-            </Container>
-            <Footer />
-        </>
-    )
-}
-
-export default Sobre
-
-~~~
-
-6. Não se esqueça de fazer o import do componente Container
-`import Container from '../../components/Container'`
-
-7. Salve as alterações e veja o resultado no browser.
-
-> Faça o mesmo processo nos arquivos 'index.jsx' das páginas 'Projetos' e 'Contatos'.
-
-
-## Criar página 404
-
-> Para as rotas não existentes precisamos criar uma página 404 que representa o erro Page Not Found, erro na requisição http de uma página web.
-
-1. Dentro da pasta `pages` crie a pasta `Page404`
-2. Dentro da pasta `Page404` crie os dois arquivos `index.jsx` e `Page404.module.css`
-3. Abra o arquivo `index.jsx` e faça o seguinte código:
-
-~~~javascript
-import Header from '../../components/Header'
-import Container from '../../components/Container'
-import Footer from '../../components/Footer'
-import styles from './Page404.module.css'
-
-function Page404() {
-    return (
-        <>
-            <Header />
-            <Container>
-                <h2 className={styles.titulo2}>Algo de errado não está certo!</h2>
-                <div className={styles.textos}>
-                    <span className={styles.texto_grande}>404</span> <br />
-                    <strong className={styles.texto_vermelho}>Página Não Localizada!</strong>
-                </div>
-            </Container>
-            <Footer />
-        </>
-    )
-}
-
-export default Page404
-
-~~~
-
-4. Salve as alterações e feche.
-
-## CSS da página 404
-
-1. Abra o arquivo `Page404.module.css` e faça o seguinte código:
-
-~~~css
-.titulo2 {
-    padding-top: 2rem;
-}
-
-.textos {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-}
-
-.texto_grande, .texto_vermelho {
-    font-size: 300px;
-    color: var(--red);
-    font-weight: bold;
-}
-
-.texto_vermelho {
-    font-size: 1.5rem;
-}
-
-~~~
-
-2. Salve as alterações, feche o arquivo do CSS.
-
-## Como usar a página 404
-
-1. Abra o arquivo `routes.jsx`
-2. Copie a última linha de rotas (CTRL + ALT + SETA P/ BAIXO)
-3. Deixe da seguinte forma:
-
-~~~javascript
-<Routes>
-    <Route path="/" element={ <Home /> }></Route>
-    <Route path="/sobre" element={ <Sobre /> }></Route>
-    <Route path="/projetos" element={ <Projetos /> }></Route>
-    <Route path="/contatos" element={ <Contatos /> }></Route>
-    <Route path="*" element={ <Page404 /> }></Route>
-</Routes>
-~~~
-
-4. O path é para * e o element é para o componente Page404. Não se esqueça de fazer o importe da Page404:
-`import Page404 from './pages/Page404'`
-
-5. Salve as alterações e feche o arquivo de rotas.
-6. Para testar, no browser tente acessar uma rota que não existe, por exemplo `http://localhost:8080/teste`
-
-> Veja como aparecerá a página 404 toda vez que você acessar no seu projeto alguma rota que não existe.
 
