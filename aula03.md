@@ -3,7 +3,7 @@
 ## Agora você modificará a classe HelloWorldController para usar arquivos de exibição.
 
 Atualmente, o método Index retorna uma cadeia de caracteres com uma mensagem na classe do controlador. Na classe HelloWorldController, substitua o método Index pelo seguinte código:
-~~~c#
+~~~ c #
 public IActionResult Index()
 {
     return View();
@@ -19,7 +19,7 @@ Métodos do controlador:
 São chamados demétodos de ação. Por exemplo, o método de ação Index no código anterior.
 Geralmente, retorna IActionResult ou uma classe ou derivada de ActionResult, não um tipo como string.
 
-##Adicionar uma exibição
+## Adicionar uma exibição
 
 Clique com o botão direito do mouse na pasta Exibições e, em seguida, Adicionar >Nova Pasta e nomeie a pasta HelloWorld.
 
@@ -34,9 +34,11 @@ Selecione Adicionar
 
 ![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/084da3f3-2e4f-42f8-b2f6-fc9a9cff4f67)
 
-Substitua o conteúdo do arquivo de exibição Views/HelloWorld/Index.cshtmlRazor pelo seguinte:
+Substitua o conteúdo do arquivo de exibição Views/HelloWorld/Index.cshtml
 
-~~~CSHTML#
+Razor pelo seguinte:
+
+~~~ cshtml #
 @{
     ViewData["Title"] = "Index";
 }
@@ -56,7 +58,7 @@ A imagem a seguir mostra a cadeia de caracteres "Olá aqui do nosso Modelo de Ex
 
 ![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/70d4a4f1-ea2e-4692-8c08-b4e73eef6db3)
 
-##Alterar exibições e páginas de layout
+## Alterar exibições e páginas de layout
 
 Selecione os links de menu MvcMovie, Home e Privacy. Cada página mostra o mesmo layout de menu. O layout do menu é implementado no arquivo Views/Shared/_Layout.cshtml.
 
@@ -68,13 +70,13 @@ Especificar o layout do contêiner HTML de um site em um só lugar.
 Aplicar o layout do contêiner HTML em várias páginas no site.
 Localize a linha @RenderBody(). RenderBody é um espaço reservado em que todas as páginas específicas à exibição criadas são mostradas, encapsuladas na página de layout. Por exemplo, se você selecionar o link Privacy, a exibição Views/Home/Privacy.cshtml será renderizada dentro do método RenderBody.
 
-##Alterar o título, o rodapé e o link de menu no arquivo de layout
+## Alterar o título, o rodapé e o link de menu no arquivo de layout
 
 Substitua o conteúdo do arquivo Views/Shared/_Layout.cshtml pela seguinte marcação. 
 
 As alterações são realçadas:
 
-~~~CSHTML#
+~~~ cshtml #
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -142,7 +144,7 @@ Observe que o título e o texto de âncora mostram Aplicativo de Filme. As alter
 
 Examine o arquivo Views/_ViewStart.cshtml:
 
-~~~CSHTML#
+~~~ cshtml #
 @{
     Layout = "_Layout";
 }
@@ -153,7 +155,7 @@ Abra o arquivo de exibição Views/HelloWorld/Index.cshtml.
 
 Altere o título e o elemento h2 conforme realçado a seguir:
 
-~~~CSHTML#
+~~~ cshtml #
 @{
     ViewData["Title"] = "Movie List";
 }
@@ -162,11 +164,12 @@ Altere o título e o elemento h2 conforme realçado a seguir:
 
 <p>Hello from our View Template!</p>
 ~~~
+
 O título e o elemento h2 são ligeiramente diferentes para que fique claro qual parte do código altera a exibição.
 
 ViewData["Title"] = "Movie List"; no código acima define a propriedade Title do dicionário ViewData como “Lista de Filmes”. A propriedade Title é usada no elemento HTML <title> na página de layout:
 
-~~~CSHTML#
+~~~ cshtml #
 <title>@ViewData["Title"] - Movie App</title>
 ~~~
 
@@ -187,7 +190,7 @@ No entanto, a pequena quantidade de "dados", a mensagem "Olá aqui do nosso Mode
 O aplicativo MVC tem um “V” (exibição), um “C” (controlador), mas ainda nenhum “M” (modelo).
 
 
-##Passando dados do controlador para a exibição
+## Passando dados do controlador para a exibição
 
 As ações do controlador são invocadas em resposta a uma solicitação de URL de entrada. Uma classe de controlador é o local em que o código é escrito e que manipula as solicitações recebidas do navegador. O controlador recupera dados de uma fonte de dados e decide qual tipo de resposta será enviada novamente para o navegador. Modelos de exibição podem ser usados em um controlador para gerar e formatar uma resposta HTML para o navegador.
 
@@ -209,6 +212,53 @@ Em vez de fazer com que o controlador renderize a resposta como uma cadeia de ca
 Em HelloWorldController.cs, altere o método Welcome para adicionar um valor Message e NumTimes ao dicionário ViewData.
 
 O dicionário ViewData é um objeto dinâmico, o que significa que qualquer tipo pode ser usado. O objeto ViewData não tem propriedades definidas até que algo seja adicionado. O sistema de model binding do MVC mapeia automaticamente os parâmetros nomeados name e numTimes da cadeia de caracteres de consulta para os parâmetros do método. O HelloWorldController completo:
+
+~~~ c #
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Encodings.Web;
+
+namespace MvcMovie.Controllers;
+
+public class HelloWorldController : Controller
+{
+    public IActionResult Index()
+    {
+        return View();
+    }
+    public IActionResult Welcome(string name, int numTimes = 1)
+    {
+        ViewData["Message"] = "Hello " + name;
+        ViewData["NumTimes"] = numTimes;
+        return View();
+    }
+}
+~~~
+
+O objeto de dicionário ViewData contém dados que serão passados para a exibição.
+Criar um modelo de exibição de boas-vindas chamado Views/HelloWorld/Welcome.cshtml.
+Você criará um loop no modelo de exibição Welcome.cshtml que exibe “Olá” NumTimes. Substitua o conteúdo de Views/HelloWorld/Welcome.cshtml pelo fornecido a seguir:
+
+~~~ cshtml #
+@{
+    ViewData["Title"] = "Welcome";
+}
+
+<h2>Welcome</h2>
+
+<ul>
+    @for (int i = 0; i < (int)ViewData["NumTimes"]!; i++)
+    {
+        <li>@ViewData["Message"]</li>
+    }
+</ul>
+~~~
+
+Salve as alterações e navegue para a seguinte URL:
+https://localhost:{PORT}/HelloWorld/Welcome?name=Sandra&numtimes=4
+Os dados são obtidos da URL e passados para o controlador usando o associador MVC.
+O controlador empacota os dados em um dicionário ViewData e passa esse objeto para a exibição. Em seguida, a exibição renderiza os dados como HTML para o navegador.
+
+No exemplo acima, o dicionário ViewData foi usado para passar dados do controlador para uma exibição. Mais adiante no tutorial, um modelo de exibição será usado para passar dados de um controlador para uma exibição. A abordagem do modelo de exibição para passar dados é geralmente a preferida em relação à abordagem do dicionário ViewData.
 
 
 
