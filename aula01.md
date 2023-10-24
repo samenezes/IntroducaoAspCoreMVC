@@ -1,62 +1,64 @@
-# Aula 01 Criar projeto React JS com o Vite, Estrutura do projeto
+# Aula 01 Criar projeto ASP.Net Core MVC
 
-## Criar projeto React JS
+Este tutorial ensina a usar o desenvolvimento Web do ASP.NET Core MVC com controladores(controllers) e exibições(Views).
+No final do tutorial, você terá um aplicativo que gerencia e exibe dados de filmes.
+Você aprenderá como:
+•	Criar um aplicativo Web.
+•	Adicionar e gerar o scaffolding de um modelo.
+•	Trabalhar com banco de dados.
+•	Adicionar pesquisa e validação.
 
-1. Crie uma pasta no seu H
-2. Abra o VsCode e abra a pasta criada
-3. Abra o terminal de comandos do VsCode, pode ser usando o atalho:  CTRL + J ou CTRL + '
-4. Pressione enter e confirme se o caminho do terminal está na pasta que você criou
-5. Digite o seguinte comando:
 
-`npm create vite@latest portfolio `
+## Criar projeto 
+1. •	Inicie o Visual Studio e selecione Criar um projeto.
+2. •	Na caixa de diálogo Criar um novo projeto, selecione Aplicativo Web do ASP.NET Core (Model-View-Controller)>Avançar.
+3. •	Na caixa de diálogo Configurar seu novo projeto, insira MvcMovie no Nome do projeto. É importante nomear o projeto MvcMovie. O uso de maiúsculas e minúsculas precisa corresponder a cada namespace quando o código é copiado.
+4. •	Selecione Avançar.
+5. •	Na caixa de diálogo Informações adicionais:
+o	Selecionar o .NET 7.0.
+o	Verifique se Não usar instruções de nível superior está desmarcado.
+6.	Selecione Criar.
 
-> Acesse o link https://vitejs.dev para mais informações sobre o vite
+ ![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/d0302cde-1413-4297-8453-65afc4cdb7d2)
 
-6. Após o comando, abrirá um leque de opções a serem selecionadas:
-7. Primeiro digite Y e enter
-8. Selecione o framework react e enter
-9. Selecione JavaScript e enter
-10. Em seguida siga as instruções geradas pela criação do projeto: As instruções são as seguintes
-11. Entre na pasta portfolio que você acabou de criar
+O Visual Studio usa o modelo de projeto padrão para o projeto MVC criado. O projeto criado:
+•	É um aplicativo funcional.
+•	Este é um projeto inicial básico.
+Executar o aplicativo
+Selecione Ctrl+F5 para executar o aplicativo sem o depurador.
+O Visual Studio exibe a seguinte caixa de diálogo quando um projeto ainda não está configurado para usar o SSL:
 
-`cd portfolio`
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/a966f223-d186-4119-806b-6919fdc4bb6f)
 
-12. Digite o comomando abaixo para criar a pasta nodemodules:
+Selecione Sim se você confia no certificado SSL do IIS Express.
 
-`npm install`
+A seguinte caixa de diálogo é exibida:
 
-Aguarde o processo de criação do projeto com o Vite.
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/1058560a-7049-4f4f-9d5f-a8187673bf5f)
 
-13. No terminal integrado do VS Code digite o comando abaixo para carregar a aplicação no seu browser:
+Selecione Sim se você concordar com confiar no certificado de desenvolvimento.
 
-`npm run dev`
+Para obter informações sobre como confiar no navegador Firefox, confira Erro de certificado Firefox SEC_ERROR_INADEQUATE_KEY_USAGE.
 
-Aguarde o carregamento da Aplicação React no seu browser,
-irá abrir no endereço local : terá um endereço IP. 
-14. Precione CTRL e clique sobre o link do IP
+O Visual Studio executa o aplicativo e abre o navegador padrão.
 
-Na raiz do projeto abra o index.html
+A barra de endereços mostra localhost:<port#> e não algo como example.com. O nome do host padrão de seu computador local localhost. Uma porta aleatória é usada para o servidor Web quando o Visual Studio cria um projeto Web.
 
-> Mude o título da página para `<title>Portfólio</title>`
+Iniciar o aplicativo sem depuração selecionando Ctrl+F5 permite que você:
 
-Salve a alteração (CTRL + S) e veja o resultado no browser.
+Realize alterações de código.
+Salve o arquivo.
+Atualize rapidamente o navegador e veja as alterações de código.
+Você pode iniciar o aplicativo no modo de não depuração ou de depuração por meio do menu Depurar:
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/8394bbaf-944c-4bb8-893f-d5047ff85a26)
 
-15. Na estrutura de pastas dentro de SRC está o arquivo App.jsx abra ele.
+Você pode depurar o aplicativo selecionando o botão https na barra de ferramentas:
 
-15.1 Apague todo o conteúdo que está dentro do fragmento do return e digite
-~~~html
-<h1>Olá Mundo!</h1>
-~~~
-15.2 Apague a `const count do useState` que não vamos usar nesse projeto
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/964946ff-ab6e-4992-aa87-3a5b6c56a340)
 
-15.3 Apague as linhas de `import` que não estão mais sendo usadas
+A imagem a seguir mostra o aplicativo:
 
-Salve a alteração (CTRL + S) e veja o resultado no browser.
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/801e4628-641c-4b9d-82e6-3b35ee2ae234)
 
-16. Apague os arquivos `vite.svg` que está na pasta `public` e o arquivo `react.svg` que está na pasta assets dentro de `src`.
 
-> Após apagar o arquivo vite.svg o favicon da página não irá aparecer. Não se preocupe, vc vai usar o seu próprio favicon.
 
-Estes são os passos básicos para criar um projeto react usando Vite.
-
-Espero ter ajudado um pouco, até a próxima.
