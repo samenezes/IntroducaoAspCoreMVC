@@ -1,341 +1,156 @@
-# Aula 02 Organizar projeto, criar página Home e componentes
+# Aula 02 Adicionar um controlador a um aplicativo ASP.NET Core MVC
 
-> O nosso projeto terá o seguinte modelo do figma
-> https://www.figma.com/community/file/1253907573035661296
+## Arquitetura MVC
+O padrão de arquitetura MVC (Model-View-Controller) separa um aplicativo em três componentes principais: Model, View e Controller. 
+O padrão MVC ajuda a criar aplicativos que são mais testáveis e fáceis de atualizar comparado aos aplicativos monolíticos tradicionais.
 
-## Imagens e Favicon
+## Os aplicativos baseados no MVC contêm:
 
-Inicialmente, precisamos copiar 3 arquivos de imagens, lembrando que 1 um deles será a imagem de favicon.svg  para a pasta public
-Faça o download das imagens que irá usar em :
-> https://undraw.co/illustrations
-Em seguida, vamos mudar o favicon no arquivo index.html
+> Models: classes que representam os dados do aplicativo. As classes de modelo usam a lógica de validação para impor regras de negócio aos dados. Normalmente, os objetos de modelo recuperam e armazenam o estado do modelo em um banco de dados. Neste tutorial, um modelo Movie recupera dados de filmes de um banco de dados, fornece-os para a exibição ou atualiza-os. O dados atualizados são gravados em um banco de dados.
+> Views: exibições são os componentes que exibem a interface do usuário do aplicativo. Em geral, essa interface do usuário exibe os dados de modelo.
+> Controladores: Classes que:
+Manipular solicitações do navegador.
+Recuperar dados do modelo.
+Chamar modelos de exibição que retornam uma resposta.
 
-## Organização do projeto
+Em um aplicativo MVC, a exibição exibe apenas informações. 
+O controlador manipula e responde à entrada e interação do usuário. Por exemplo, o controlador manipula os segmentos da URL e os valores de cadeia de consulta e passa esses valores para o modelo.
+O modelo pode usar esses valores para consultar o banco de dados. Por exemplo:
 
-### Criar pastas pages e components
+https://localhost:5001/Home/Privacy: especifica o controlador Home e a ação Privacy.
+https://localhost:5001/Movies/Edit/5: é uma solicitação para editar o filme com ID=5 usando o controlador Movies e a ação Edit, que são detalhados posteriormente no tutorial.
 
-Dentro de src
-1. Criar pasta pages
-2. Criar pasta components
+Os dados de rota serão explicados posteriormente no tutorial.
 
-## Criar componente Header
+O padrão de arquitetura MVC separa um aplicativo em três grupos de componentes principais: Modelos, Exibições e Componentes. Esse padrão ajuda a obter a separação de interesses: a lógica da interface do usuário pertence à exibição. A lógica de entrada pertence ao controlador. A lógica de negócios pertence ao modelo. Essa separação ajuda a gerenciar a complexidade ao criar um aplicativo, porque permite trabalhar em um aspecto da implementação por vez, sem afetar o código de outro. Por exemplo, você pode trabalhar no código de exibição sem depender do código da lógica de negócios.
 
-Dentro de \src\components
-1. Crie a pasta 'Header'
-2. Dentro de Header crie os arquivos 'index.jsx' e 'Header.module.css'
+O projeto MVC contém pastas para os Controladores e as Exibições.
 
-Criar componente Container
+## Adicionar um controlador
 
-Dentro de \src\components
-1. Crie a pasta 'Container'
-2. Dentro de Container crie os arquivos 'index.jsx' e 'Container.module.css'
+### No Gerenciador de Soluções, clique com o botão direito do mouse em Controladores > Adicionar > Controlador.
 
-Criar componente Footer
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/d825179d-344c-4429-8d75-c1573434043a)
 
-Dentro de \src\components
-1. Crie a pasta 'Footer'
-2. Dentro de Footer crie os arquivos 'index.jsx' e 'Footer.module.css'
+Na caixa de diálogo Adicionar Novo Item com Scaffolding, selecione Controlador MVC – Vazio>Adicionar.
 
-## Componente Header
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/ccbdc2b7-c8d0-4aa7-bcd2-3a410dcf0eeb)
 
-1. Abra o arquivo index.jsx de Header
-2. Faça o seguinte código:
+Na caixa de diálogo Adicionar Novo Item – MvcMovie, insira HelloWorldController.cs e selecione Adicionar.
 
-~~~javascript
-import styles from './Header.module.css'
+Substitua o conteúdo de Controllers/HelloWorldController.cs pelo seguinte código:
 
-function Header() {
-    return (
-        <header className={styles.header}>
-            <span>Sandra Alves</span>
-            <nav>
-                <a href="">Home</a>
-                <a href="">Sobre</a>
-                <a href="">Projetos</a>
-                <a href="">Contatos</a>
-            </nav>
-        </header>
-    )    
-}
+~~~C#
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Encodings.Web;
 
-export default Header
+namespace MvcMovie.Controllers;
 
-~~~
-
-3. Salve as alterações.
-
-## CSS do Header
-
-1. Abra o arquivo Header.module.css
-2. Faça o seguinte código:
-
-~~~css
-.header {
-    width: 100%;
-    height: 50px;
-    background-color: var(--primary);
-    color: var(--white);
-
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-}
-
-.header span {
-    font-size: 1.5rem; /* 24px -> 16px = 1rem */
-    font-weight: bold;
-}
-
-.header a {
-    text-decoration: none;
-    color: var(--white);
-    padding-right: 1.5rem;
-    font-size: 1.125rem; /* 18px */
-}
-
-.header a:hover {
-    color: var(--red);
+public class HelloWorldController : Controller
+{
+    // 
+    // GET: /HelloWorld/
+    public string Index()
+    {
+        return "This is my default action...";
+    }
+    // 
+    // GET: /HelloWorld/Welcome/ 
+    public string Welcome()
+    {
+        return "This is the Welcome action method...";
+    }
 }
 
 ~~~
 
-3. Salve as alterações.
+Cada método public em um controlador pode ser chamado como um ponto de extremidade HTTP. Na amostra acima, ambos os métodos retornam uma cadeia de caracteres. Observe os comentários que precedem cada método.
 
-## Utilizar o compomente Header
+Um ponto de extremidade HTTP:
 
-1. Abra o arquivo App.jsx
-2. Dentro do fragment apague a tag h1 e coloque a tag do componente `<Header />`
+É uma URL direcionável no aplicativo Web, como https://localhost:5001/HelloWorld.
+Combina:
+O protocolo usado: HTTPS.
+O local de rede do servidor Web, incluindo a porta TCP: localhost:5001.
+O URI de destino: HelloWorld.
+O primeiro comentário indica que este é um método HTTP GET invocado por meio do acréscimo de /HelloWorld/ à URL base.
 
-~~~javascript
-  <>
-    <Header />
-  </>
+O primeiro comentário especifica um método HTTP GET invocado por meio do acréscimo de /HelloWorld/Welcome/ à URL base. Mais adiante no tutorial, o mecanismo de scaffolding será usado para gerar métodos HTTP POST que atualizam dados.
+
+Execute o aplicativo sem o depurador.
+
+Acrescente /HelloWorld ao caminho na barra de endereços. O método Index retorna uma cadeia de caracteres.
+
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/ef5b5941-2a5f-4e5c-95a0-76742ba4a970)
+
+O MVC invoca as classes do controlador e os métodos de ação dentro delas, dependendo da URL de entrada. A lógica de roteamento de URL padrão usada pelo MVC usa um formato como este para determinar o código a ser invocado:
+
+/[Controller]/[ActionName]/[Parameters]
+
+O formato de roteamento é definido no arquivo Program.cs .
+
+~~~c#
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 ~~~
 
-3. Faça o import do componente Header
-`import Header from './components/Header'`
+Quando você acessa o aplicativo e não fornece nenhum segmento de URL, ele usa como padrão o controlador “Home” e o método “Index” especificado na linha do modelo realçada acima. Nos segmentos de URL anteriores:
 
-4. Salve as alterações (CTRL + S) e veja o resultado no Browser
+O primeiro segmento de URL determina a classe do controlador a ser executada. 
+> Portanto, o localhost:5001/HelloWorld mapeia para a classe HelloWorldController.
+A segunda parte do segmento de URL determina o método de ação na classe. 
+> Portanto, localhost:5001/HelloWorld/Index faz com que o método Index da classe HelloWorldController seja executado.
 
-## Ajustes nos arquivos App.css e index.css 
+Observe que você precisou apenas navegar para localhost:5001/HelloWorld e o método Index foi chamado por padrão.
+Index é o método padrão que será chamado em um controlador se não houver um nome de método explicitamente especificado.
+A terceira parte do segmento de URL (id) refere-se aos dados de rota. Os dados de rota são explicados posteriormente no tutorial.
+Procure: https://localhost:{PORT}/HelloWorld/Welcome. Substitua {PORT} pelo número da porta.
 
-1. Abra o arquivo App.css
-2. Selecione tudo e apague
-3. Salve as alterações e feche
-4. Abra o arquivo index.css, é nosso css global 
-5. Apague da linha 16 até a linha 70
-6. Apague as 2 até 8 da propriedade line-height até background-color
-7. O seletor :root ficará assim:
+O método Welcome é executado e retorna a cadeia de caracteres This is the Welcome action method.... Para essa URL, o controlador é HelloWorld e Welcome é o método de ação. Você ainda não usou a parte [Parameters] da URL.
 
-~~~css
-:root {
-  font-family: 'Fira Code', monospace;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/315e6c8e-98bc-4f02-87f5-aca797eeb8ab)
+
+Modifique o código para passar algumas informações de parâmetro da URL para o controlador. Por exemplo, /HelloWorld/Welcome?name=Rick&numtimes=4.
+
+Altere o método Welcome para incluir dois parâmetros, conforme mostrado no código a seguir.
+
+~~~C#
+  // GET: /HelloWorld/Welcome/ 
+// Requires using System.Text.Encodings.Web;
+public string Welcome(string name, int numTimes = 1)
+{
+    return HtmlEncoder.Default.Encode($"Hello {name}, NumTimes is: {numTimes}");
 }
 ~~~
+O código anterior:
 
-8. Abaixo do seletor :root crie o seguinte:
+Usa o recurso de parâmetro opcional do C# para indicar que o parâmetro numTimes usa 1 como padrão se nenhum valor é passado para esse parâmetro.
+Usa HtmlEncoder.Default.Encode para proteger o aplicativo contra entrada mal-intencionada, como através de JavaScript.
+Usa Cadeias de caracteres interpoladas em $"Hello {name}, NumTimes is: {numTimes}".
+Execute o aplicativo e navegue até: https://localhost:{PORT}/HelloWorld/Welcome?name=Rick&numtimes=4. Substitua {PORT} pelo número da porta.
 
-~~~css
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+Experimente valores diferentes para name e numtimes na URL. O sistema de model binding do MVC mapeia automaticamente os parâmetros nomeados da cadeia de consulta para os parâmetros no método. Consulte Model binding para obter mais informações.
+
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/12629aff-1c57-4921-a660-691bf007d6aa)
+
+Na imagem anterior:
+
+O segmento de URL Parameters não é usado.
+Os parâmetros name e numTimes são passados na cadeia de caracteres de consulta.
+O ? (ponto de interrogação) na URL acima é um separador seguido pela cadeia de consulta.
+O caractere & separa os pares campo-valor.
+Substitua o método Welcome pelo seguinte código:
+
+~~~C#
+public string Welcome(string name, int ID = 1)
+{
+    return HtmlEncoder.Default.Encode($"Hello {name}, ID: {ID}");
 }
+~~~~
 
-~~~
+No exemplo anterior:
 
-9. Dentro do seletor :root acrescente as variáveis de cores do nosso projeto
-~~~css
-:root {
-  font-family: 'Fira Code', monospace;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-
-  --primary: #16213E;
-  --secondary: #0F3460;
-  --terceary: #533483;
-  --red: #E94560;
-  --soft-white: #f1f1f1;
-  --white: #fefefe;
-  --black: #111;
-  --gray: #222222;
-}
-~~~
-
-## Fonte personalizada 
-
-Vamos usar a fonte 'Fira Code' do Google Fonts com os pesos 400, 500 e 600
-
-1. Copie o código para usarmos ela como link no `head` do arquivo `index.html`
-
-~~~html
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
-~~~
-
-2. Salve as alterações
-3. Feche o arquivo index.html
-
-## CSS span, nav e a do Header 
-Formatação do span 
-Formatação dos links da tag a 
-
-## Criar component Footer 
-
-1. Abra o arquivo index.jsx do Footer
-2. Faça o seguinte código:
-
-~~~javascript
-import styles from './Footer.module.css'
-
-function Footer() {
-    return (
-        <footer className={styles.footer}>
-            Feito com ❣️ por Sandra Alves © 2023
-        </footer>
-    )
-}
-
-export default Footer
-
-~~~
-
-## CSS do Footer
-
-1. Abra o arquivo Footer.module.css
-2. Faça o seguinte código:
-
-~~~css
-.footer {
-    width: 100%;
-    height: 50px;
-    background-color: var(--primary);
-    color: var(--white);
-    font-weight: bold;
-    font-size: 1.125rem; /* 18px */
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-~~~
-
-3. Salve as alterações
-
-## Utilizar o Footer no App.jsx
-
-1. Abra o arquivo `App.jsx`
-2. Abaixo do Header digite o seguinte código:
-
-~~~javascript
-  Conteúdo
-  <Footer />
-~~~
-
-3. Faça o import do component Footer
-`import Footer from './components/Footer`
-
-4. Salve as alterações e veja o resultado no Browser
-
-## Sobre o Conteúdo da página 
-
-> Vamos fazer o conteúdo da página Home diretamente dentro de App.jsx, mas, depois iremos colocar na page Home, como um componente funcional.
-
-## Imagem da página Home 
-
-> https://undraw.co/illustrations
-
-No site unDraw você pode escolher uma ilustração, personalizar a cor de destaque, salvar a imagem no formato svg ou png.
-
-## Conteúdo da página Home
-
-1. Abra o arquivo `App.jsx`
-2. Abaixo do `Header` faça o seguinte código:
-
-~~~javascript
-<section className='container'>
-  <div className='apresentacao'>
-    <p>
-      Olá, sou <br/>
-      <span>Sandra Alves</span> <br/>
-      Dev Full Stack
-    </p>
-    <button className='btn btn-red'>
-      Saiba mais sobre mim
-    </button>
-  </div>
-  <figure>
-    <img className='img-home' src="/developer-red.svg" alt="Imagem de Home" />
-  </figure>
-</section>
-
-~~~
-
-3. Salve as alterações e veja o resultado no browser.
-
-## CSS do Conteúdo da página Home 
-
-> Por enquanto, vamos fazer a formatação destes conteúdos usando o arquivo App.css
-
-1. Abra o arquivo App.css
-2. Faça o seguinte código:
-
-~~~css
-/* css da page Home */
-.container {
-    width: 100%;
-    min-height: 90vh;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-}
-
-.container img {
-    height: 500px;
-}
-
-.container p {
-    font-size: 3rem; /* 48px */
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
-
-.container span {
-    color: var(--red);
-}
-
-.btn {
-    width: 250px;
-    height: 50px;
-    font-size: 1.125rem;
-    font-weight: bold;
-    border: 0;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.btn-red {
-    background-color: var(--red);
-    color: var(--white);
-}
-
-.btn-red:hover {
-    background-color: var(--primary);
-}
-
-~~~
-
-3. Salve as alterações e veja o resultado no browser.
-
-
+O terceiro segmento de URL correspondeu ao parâmetro de rota id.
+O método Welcome contém um parâmetro id que correspondeu ao modelo de URL no método MapControllerRoute.
+O ? à direita (em id?) indica que o parâmetro id é opcional.
