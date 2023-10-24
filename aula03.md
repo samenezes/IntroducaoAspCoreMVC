@@ -69,7 +69,10 @@ Aplicar o layout do contêiner HTML em várias páginas no site.
 Localize a linha @RenderBody(). RenderBody é um espaço reservado em que todas as páginas específicas à exibição criadas são mostradas, encapsuladas na página de layout. Por exemplo, se você selecionar o link Privacy, a exibição Views/Home/Privacy.cshtml será renderizada dentro do método RenderBody.
 
 ##Alterar o título, o rodapé e o link de menu no arquivo de layout
-Substitua o conteúdo do arquivo Views/Shared/_Layout.cshtml pela seguinte marcação. As alterações são realçadas:
+
+Substitua o conteúdo do arquivo Views/Shared/_Layout.cshtml pela seguinte marcação. 
+
+As alterações são realçadas:
 
 ~~~CSHTML#
 <!DOCTYPE html>
@@ -148,7 +151,7 @@ O arquivo Views/_ViewStart.cshtml traz o arquivo Views/Shared/_Layout.cshtml par
 
 Abra o arquivo de exibição Views/HelloWorld/Index.cshtml.
 
-Altere o título e o elemento <h2> conforme realçado a seguir:
+Altere o título e o elemento h2 conforme realçado a seguir:
 
 ~~~CSHTML#
 @{
@@ -159,7 +162,7 @@ Altere o título e o elemento <h2> conforme realçado a seguir:
 
 <p>Hello from our View Template!</p>
 ~~~
-O título e o elemento <h2> são ligeiramente diferentes para que fique claro qual parte do código altera a exibição.
+O título e o elemento h2 são ligeiramente diferentes para que fique claro qual parte do código altera a exibição.
 
 ViewData["Title"] = "Movie List"; no código acima define a propriedade Title do dicionário ViewData como “Lista de Filmes”. A propriedade Title é usada no elemento HTML <title> na página de layout:
 
@@ -180,7 +183,8 @@ O conteúdo do modelo de exibição Index.cshtml é mesclado com o modelo de exi
 
 ![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/509ff42b-6ae0-4e31-a177-95c4eaa1413b)
 
-No entanto, a pequena quantidade de "dados", a mensagem "Olá aqui do nosso Modelo de Exibição!", é nativa do código. O aplicativo MVC tem um “V” (exibição), um “C” (controlador), mas ainda nenhum “M” (modelo).
+No entanto, a pequena quantidade de "dados", a mensagem "Olá aqui do nosso Modelo de Exibição!", é nativa do código.
+O aplicativo MVC tem um “V” (exibição), um “C” (controlador), mas ainda nenhum “M” (modelo).
 
 
 ##Passando dados do controlador para a exibição
