@@ -151,7 +151,7 @@ public string Welcome(string name, int ID = 1)
 ~~~~
 
 Execute o aplicativo e insira a seguinte 
-> URL: https://localhost:{PORT}/HelloWorld/Welcome/3?name=Sandra
+>URL: https://localhost:{PORT}/HelloWorld/Welcome/3?name=Sandra
 
 Na URL anterior:
 
@@ -159,7 +159,7 @@ O terceiro segmento de URL correspondeu ao parâmetro de rota id.
 O método Welcome contém um parâmetro id que correspondeu ao modelo de URL no método MapControllerRoute.
 O ? à direita inicia a cadeia de caracteres de consulta.
 
-~~~C#
+~~~c#
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
