@@ -323,6 +323,79 @@ O HTML gerado para o elemento <form> é mostrado abaixo.
 ~~~
 
 
+Os elementos <input> estão em um elemento HTML <form> cujo atributo action está definido para ser postado para a URL /Movies/Edit/id.
+Os dados de formulário serão postados com o servidor quando o botão Save receber um clique. 
+A última linha antes do elemento </form> de fechamento mostra o token XSRF oculto gerado pelo Auxiliar de Marcação de Formulário.
+
+## Processando a solicitação POST
+
+A lista a seguir mostra a versão [HttpPost] do método de ação Edit.
+
+~~~ C #
+// POST: Movies/Edit/5
+// To protect from overposting attacks, enable the specific properties you want to bind to.
+// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Edit(int id, [Bind("Id,Title,ReleaseDate,Genre,Price,Rating")] Movie movie)
+{
+    if (id != movie.Id)
+    {
+        return NotFound();
+    }
+
+    if (ModelState.IsValid)
+    {
+        try
+        {
+            _context.Update(movie);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!MovieExists(movie.Id))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+        return RedirectToAction(nameof(Index));
+    }
+    return View(movie);
+}
+
+~~~
+O atributo [ValidateAntiForgeryToken] valida o token XSRF oculto gerado pelo gerador de tokens antifalsificação no Auxiliar de Marcação de Formulário
+
+O sistema de model binding usa os valores de formulário postados e cria um objeto Movie que é passado como o parâmetro movie. 
+A propriedade ModelState.IsValid verifica se os dados enviados no formulário podem ser usados para modificar (editar ou atualizar) um objeto Movie. 
+Se os dados forem válidos, eles serão salvos. 
+Os dados de filmes atualizados (editados) são salvos no banco de dados chamando o método SaveChangesAsync do contexto de banco de dados. 
+Depois de salvar os dados, o código redireciona o usuário para o método de ação Index da classe MoviesController, que exibe a coleção de filmes, incluindo as alterações feitas recentemente.
+
+Antes que o formulário seja postado no servidor, a validação do lado do cliente verifica as regras de validação nos campos. 
+Se houver erros de validação, será exibida uma mensagem de erro e o formulário não será postado. 
+Se o JavaScript estiver desabilitado, você não terá a validação do lado do cliente, mas o servidor detectará os valores postados que 
+não forem válidos e os valores de formulário serão exibidos novamente com mensagens de erro. 
+Mais adiante no tutorial, examinamos a Validação de Modelos mais detalhadamente. 
+O Auxiliar de Marcação de Validação no modelo de exibição Views/Movies/Edit.cshtml é responsável por exibir as mensagens de erro apropriadas.
+
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/55158a41-09e5-4d48-b0dd-e6f7fd2b3a12)
+
+Todos os métodos HttpGet no controlador de filme seguem um padrão semelhante.
+Eles obtêm um objeto de filme (ou uma lista de objetos, no caso de Index) e passam o objeto (modelo) para a exibição.
+O método Create passa um objeto de filme vazio para a exibição Create. 
+Todos os métodos que criam, editam, excluem ou, de outro modo, modificam dados fazem isso na sobrecarga [HttpPost] do método.
+A modificação de dados em um método HTTP GET é um risco de segurança. 
+A modificação de dados em um método HTTP GET também viola as melhores práticas de HTTP e o padrão REST de arquitetura, que especifica que as solicitações GET não devem alterar o estado do aplicativo. 
+Em outras palavras, a execução de uma operação GET deve ser uma operação segura que não tem efeitos colaterais e não modifica os dados persistentes.
+
+
+
+
 
 
 
