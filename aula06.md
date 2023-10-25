@@ -200,6 +200,128 @@ O Auxiliar de Marcação de Formulário gera um token antifalsificação oculto 
 O método HttpGet Edit usa o parâmetro ID de filme, pesquisa o filme usando o método FindAsync do Entity Framework e retorna o filme selecionado para a exibição de Edição. 
 Se um filme não for encontrado, NotFound (HTTP 404) será retornado.
 
+~~~ C #
+
+// GET: Movies/Edit/5
+public async Task<IActionResult> Edit(int? id)
+{
+    if (id == null)
+    {
+        return NotFound();
+    }
+
+    var movie = await _context.Movie.FindAsync(id);
+    if (movie == null)
+    {
+        return NotFound();
+    }
+    return View(movie);
+}
+
+~~~
+
+Quando o sistema de scaffolding criou a exibição de Edição, ele examinou a classe Movie e o código criado para renderizar os elementos <label> e <input> de cada propriedade da classe. 
+O seguinte exemplo mostra a exibição de Edição que foi gerada pelo sistema de scaffolding do Visual Studio:
+
+~~~ CSHTML #
+
+@model MvcMovie.Models.Movie
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Movie</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ReleaseDate" class="control-label"></label>
+                <input asp-for="ReleaseDate" class="form-control" />
+                <span asp-validation-for="ReleaseDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Genre" class="control-label"></label>
+                <input asp-for="Genre" class="form-control" />
+                <span asp-validation-for="Genre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+~~~
+
+Observe como o modelo de exibição tem uma instrução @model MvcMovie.Models.Movie na parte superior do arquivo. 
+@model MvcMovie.Models.Movie especifica que a exibição espera que o modelo de exibição seja do tipo Movie.
+
+O código com scaffolding usa vários métodos de Auxiliares de Marcação para simplificar a marcação HTML. 
+O Auxiliar de Marcação de Rótulo exibe o nome do campo (“Title”, “ReleaseDate”, “Genre” ou “Price”). 
+O Auxiliar de Marcação de Entrada renderiza um elemento <input> HTML. 
+O Auxiliar de Marcação de Validação exibe todas as mensagens de validação associadas a essa propriedade.
+
+Execute o aplicativo e navegue para a URL /Movies. Clique em um link Editar. No navegador, exiba a origem da página. 
+O HTML gerado para o elemento <form> é mostrado abaixo.
+
+~~~ HTML #
+
+<form action="/Movies/Edit/7" method="post">
+    <div class="form-horizontal">
+        <h4>Movie</h4>
+        <hr />
+        <div class="text-danger" />
+        <input type="hidden" data-val="true" data-val-required="The ID field is required." id="ID" name="ID" value="7" />
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Genre" />
+            <div class="col-md-10">
+                <input class="form-control" type="text" id="Genre" name="Genre" value="Western" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="Genre" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Price" />
+            <div class="col-md-10">
+                <input class="form-control" type="text" data-val="true" data-val-number="The field Price must be a number." data-val-required="The Price field is required." id="Price" name="Price" value="3.99" />
+                <span class="text-danger field-validation-valid" data-valmsg-for="Price" data-valmsg-replace="true"></span>
+            </div>
+        </div>
+        <!-- Markup removed for brevity -->
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+    <input name="__RequestVerificationToken" type="hidden" value="CfDJ8Inyxgp63fRFqUePGvuI5jGZsloJu1L7X9le1gy7NCIlSduCRx9jDQClrV9pOTTmqUyXnJBXhmrjcUVDJyDUMm7-MF_9rK8aAZdRdlOri7FmKVkRe_2v5LIHGKFcTjPrWPYnc9AdSbomkiOSaTEg7RU" />
+</form>
+
+~~~
+
 
 
 
