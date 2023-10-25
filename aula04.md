@@ -95,7 +95,8 @@ Registra o contexto do banco de dados no arquivo Program.cs.
 Adicionar uma cadeia de caracteres de conexão do banco de dados ao arquivo appsettings.json.
 A criação automática desses arquivos e atualizações de arquivos é conhecida como scaffolding.
 
-As páginas com scaffolding ainda não podem ser usadas porque o banco de dados não existe. Executar o aplicativo e selecionar o link Aplicativo de Filme resulta em uma mensagem de erro Não é possível abrir o banco de dados ou nenhuma tabela desse tipo: filme.
+As páginas com scaffolding ainda não podem ser usadas porque o banco de dados não existe. 
+Executar o aplicativo e selecionar o link Aplicativo de Filme resulta em uma mensagem de erro Não é possível abrir o banco de dados ou nenhuma tabela desse tipo: filme.
 
 Crie o aplicativo para verificar se não há erros.
 
@@ -115,7 +116,9 @@ Update-Database
 
 ~~~
 
-Add-Migration InitialCreate: gera um arquivo de migração Migrations/{timestamp}_InitialCreate.cs. O argumento InitialCreate é o nome da migração. Qualquer nome pode ser usado, mas, por convenção, um nome que descreve a migração é selecionado. Como essa é a primeira migração, a classe gerada contém o código para criar o esquema de banco de dados. O esquema de banco de dados é baseado no modelo especificado na classe MvcMovieContext.
+Add-Migration InitialCreate: gera um arquivo de migração Migrations/{timestamp}_InitialCreate.cs.
+O argumento InitialCreate é o nome da migração. Qualquer nome pode ser usado, mas, por convenção, um nome que descreve a migração é selecionado. 
+Como essa é a primeira migração, a classe gerada contém o código para criar o esquema de banco de dados. O esquema de banco de dados é baseado no modelo especificado na classe MvcMovieContext.
 
 Update-Database: atualiza o banco de dados para a migração mais recente, que o comando anterior criou. Esse comando executa o método Up no arquivo Migrations/{time-stamp}_InitialCreate.cs, que cria o banco de dados.
 
@@ -137,7 +140,9 @@ SqlException: Cannot open database "MvcMovieContext-1" requested by the login. T
 
 ## Examinar a classe de contexto e o registro do banco de dados gerados
 
-Com o EF Core, o acesso aos dados é executado usando um modelo. Um modelo é feito de classes de entidade e um objeto de contexto que representa uma sessão com o banco de dados. O objeto de contexto permite consultar e salvar dados. O contexto de banco de dados é derivado de Microsoft. EntityFrameworkCore.DbContext e especifica as entidades a serem incluídas no modelo de dados.
+Com o EF Core, o acesso aos dados é executado usando um modelo. Um modelo é feito de classes de entidade e um objeto de contexto que representa uma sessão com o banco de dados.
+O objeto de contexto permite consultar e salvar dados. O contexto de banco de dados é derivado de Microsoft. 
+EntityFrameworkCore.DbContext e especifica as entidades a serem incluídas no modelo de dados.
 
 O scaffolding cria a classe de contexto do banco de dados Data/MvcMovieContext.cs:
 
@@ -167,9 +172,11 @@ O código anterior cria uma propriedade DbSet<Movie> que representa os filmes no
 
 ## Injeção de dependência
 
-O ASP.NET Core foi criado com a DI (injeção de dependência). Serviços, como o contexto do banco de dados, são registrados com DI no Program.cs. Esses serviços são fornecidos aos componentes que necessitam deles através de parâmetros do construtor.
+O ASP.NET Core foi criado com a DI (injeção de dependência). Serviços, como o contexto do banco de dados, são registrados com DI no Program.cs. 
+Esses serviços são fornecidos aos componentes que necessitam deles através de parâmetros do construtor.
 
-No arquivo Controllers/MoviesController.cs, o construtor usa a Injeção de Dependência para injetar o contexto do banco de dados MvcMovieContext no controlador. O contexto de banco de dados é usado em cada um dos métodos CRUD no controlador.
+No arquivo Controllers/MoviesController.cs, o construtor usa a Injeção de Dependência para injetar o contexto do banco de dados MvcMovieContext no controlador.
+O contexto de banco de dados é usado em cada um dos métodos CRUD no controlador.
 
 O scaffolding gerou o seguinte código realçado em Program.cs:
 
@@ -265,5 +272,213 @@ public class MoviesController : Controller
         _context = context;
     }
 ~~~
+
+O construtor usa a Injeção de Dependência para injetar o contexto de banco de dados (MvcMovieContext) no controlador.
+O contexto de banco de dados é usado em cada um dos métodos CRUD no controlador.
+
+Teste a página Criar. Inserir e enviar dados.
+
+Teste os links Editar, Detalhes e Excluir.
+
+
+Modelos fortemente tipados e a diretiva @model
+Anteriormente neste tutorial, você viu como um controlador pode passar dados ou objetos para uma exibição usando o dicionário ViewData.
+O dicionário ViewData é um objeto dinâmico que fornece uma maneira conveniente de associação tardia para passar informações para uma exibição.
+
+O MVC também fornece a capacidade de passar objetos de modelo fortemente tipados para uma exibição. Essa abordagem fortemente tipada permite a verificação de código em tempo de compilação.
+O mecanismo de scaffolding passou um modelo fortemente tipado na classe e nas exibições de MoviesController.
+
+Examine o método de Details gerado no arquivo Controllers/MoviesController.cs :
+
+~~~ c #
+// GET: Movies/Details/5
+public async Task<IActionResult> Details(int? id)
+{
+    if (id == null)
+    {
+        return NotFound();
+    }
+
+    var movie = await _context.Movie
+        .FirstOrDefaultAsync(m => m.Id == id);
+    if (movie == null)
+    {
+        return NotFound();
+    }
+
+    return View(movie);
+}
+~~~
+
+O parâmetro id geralmente é passado como dados de rota. Por exemplo, https://localhost:5001/movies/details/1 define:
+
+O controlador para o controlador movies, o primeiro segmento da URL.
+A ação para details, o segundo segmento da URL.
+O idpara 1, o último segmento da URL.
+O id pode ser passado com uma cadeia de caracteres de consulta, como no exemplo a seguir:
+
+https://localhost:5001/movies/details?id=1
+
+O parâmetro id é definido como um tipo que permite valor nulo (int?) nos casos em que o valor de id não seja fornecido.
+
+Um expressão lambda é passada para o método FirstOrDefaultAsync para selecionar as entidades de filmes que correspondem ao valor dos dados da rota ou da cadeia de consulta.
+
+~~~ c #
+
+var movie = await _context.Movie
+    .FirstOrDefaultAsync(m => m.Id == id);
+~~~
+
+Se for encontrado um filme, uma instância do modelo Movie será passada para a exibição Details:
+
+~~~ c #
+
+return View(movie);
+~~~
+
+Examinar o conteúdo do arquivo Views/Movies/Details.cshtml:
+
+~~~ cshtml #
+
+@model MvcMovie.Models.Movie
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Movie</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ReleaseDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ReleaseDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Genre)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Genre)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+~~~
+
+A instrução @model na parte superior do arquivo de exibição especifica o tipo de objeto que a exibição espera. 
+Quando o controlador de filme foi criado, a seguinte instrução @model foi incluída:
+
+~~~ cshtml #
+
+@model MvcMovie.Models.Movie
+
+~~~
+
+Essa diretiva @model permite o acesso ao filme que o controlador passou para a exibição. O objeto Model é fortemente tipado. 
+Por exemplo, na exibição Details.cshtml, o código passa cada campo de filme para os Auxiliares de HTML DisplayNameFor e DisplayFor com o objeto fortemente tipado Model.
+Os métodos Create e Edit e as exibições também passam um objeto de modelo Movie.
+
+Examine a exibição Index.cshtml e o método Index no controlador Filmes. 
+Observe como o código cria um objeto List quando ele chama o método View. 
+O código passa esta lista Movies do método de ação Index para a exibição:
+
+~~~ c #
+// GET: Movies
+public async Task<IActionResult> Index()
+{
+    return View(await _context.Movie.ToListAsync());
+}
+~~~
+
+O código retornará os detalhes do problema se a propriedade Movie do contexto dos dados for nula.
+
+Quando o controlador de filmes foi criado, o scaffolding incluiu a seguinte instrução @model na parte superior do arquivo Index.cshtml:
+
+~~~ cshtml #
+@model IEnumerable<MvcMovie.Models.Movie>
+~~~
+
+A diretiva @model permite acessar a lista de filmes que o controlador passou para a exibição usando um objeto Model fortemente tipado.
+Por exemplo, na exibição Index.cshtml o código executa um loop pelos filmes com uma instrução foreach no objeto Model fortemente tipado:
+
+~~~ cshtml #
+@model IEnumerable<MvcMovie.Models.Movie>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ReleaseDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Genre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReleaseDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Genre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+~~~
+Como o objeto Model é fortemente tipado como um objeto IEnumerable<Movie>, cada item no loop é tipado como Movie. 
+Entre outros benefícios, o compilador valida os tipos usados no código.
+
+
 
 
