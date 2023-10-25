@@ -173,4 +173,81 @@ No arquivo Controllers/MoviesController.cs, o construtor usa a Injeção de Depe
 
 O scaffolding gerou o seguinte código realçado em Program.cs:
 
+~~~ c #
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<MvcMovieContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MvcMovieContext")));
+~~~
+
+O sistema de configuração ASP.NET Core faz a leitura da cadeia de caracteres de conexão de banco de dados "MvcMovieContext".
+
+
+## Examinar a cadeia de caracteres de conexão de banco de dados gerada
+
+O scaffolding adicionou uma cadeia de conexão ao arquivo appsettings.json:
+
+~~~ json #
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "MvcMovieContext": "Data Source=MvcMovieContext-ea7a4069-f366-4742-bd1c-3f753a804ce1.db"
+  }
+}
+~~~
+
+No desenvolvimento local, o sistema de configuração do ASP.NET Core lê a chave ConnectionString do arquivo appsettings.json.
+
+## A classe InitialCreate
+
+Examinar o arquivo de migração Migrations/{timestamp}_InitialCreate.cs:
+
+~~~ c #
+using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace MvcMovie.Migrations
+{
+    public partial class InitialCreate : Migration
+    {
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.CreateTable(
+                name: "Movie",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Genre = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Movie", x => x.Id);
+                });
+        }
+
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "Movie");
+        }
+    }
+}
+~~~
+
+No código anterior:
+
+InitialCreate.Up cria a tabela de Filmes e configura Id como a chave primária.
+O método InitialCreate.Down reverte as alterações de esquema feitas pela migração de Up.
 
