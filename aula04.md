@@ -251,3 +251,19 @@ No código anterior:
 InitialCreate.Up cria a tabela de Filmes e configura Id como a chave primária.
 O método InitialCreate.Down reverte as alterações de esquema feitas pela migração de Up.
 
+## Injeção de dependência no controlador
+
+Abra o arquivo Controllers/MoviesController.cs e examine o construtor:
+
+~~~ c #
+public class MoviesController : Controller
+{
+    private readonly MvcMovieContext _context;
+
+    public MoviesController(MvcMovieContext context)
+    {
+        _context = context;
+    }
+~~~
+
+
