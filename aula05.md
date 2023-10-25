@@ -135,7 +135,7 @@ Substitua o conteúdo de Program.cs pelo seguinte código. O novo código está 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MvcMovie.Data;
-using MvcMovie.Models;
+using MvcMovie.Models; //essa linha 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -147,12 +147,12 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+using (var scope = app.Services.CreateScope()) //essa linha
 {
     var services = scope.ServiceProvider;
 
     SeedData.Initialize(services);
-}
+}                                              //até essa linha
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
