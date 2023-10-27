@@ -1,123 +1,37 @@
-# Aula 07 Página Sobre
+# Adicione uma pesquisa ao aplicativo ASP.NET Core MVC
 
-## Página Sobre
+Nesta seção, você adiciona a funcionalidade de pesquisa ao método de ação Index que permite pesquisar filmes por gênero ou nome.
 
-1. Dentro da pasta `Sobre` crie o arquivo `Sobre.module.css`
-2. Dentro da pasta `Sobre` crie a pasta `images`
-3. Copie os arquivos de imagem para dentro dessa pasta.
-4. Abrir o arquivo `index.jsx`
-5. Faça o seguinte código:
+Atualize o método Index encontrado dentro de Controllers/MoviesController.cs com o seguinte código:
 
-~~~javascript
+~~~ c #
 
-import styles from './Sobre.module.css'
-import avatar from './images/avatar.png'
-import html from './images/icon-html.svg'
-import css from './images/icon-css.svg'
-import js from './images/icon-js.svg'
-import react from './images/icon-react.svg'
-import node from './images/icon-node.svg'
-import sql from './images/icon-sql.svg'
+public async Task<IActionResult> Index(string searchString)
+{
+    if (_context.Movie == null)
+    {
+        return Problem("Entity set 'MvcMovieContext.Movie'  is null.");
+    }
 
-function Sobre() {
-    return (
-        <section className={styles.sobre}>
-            
-            <div className={styles.bio}>
-                <img src={avatar} alt="Avatar" className={styles.avatar} />
-                <div className={styles.textos}>
-                    <h2>Sobre</h2>
+    var movies = from m in _context.Movie
+                select m;
 
-                    <p>Sou <span>Sandra Alves</span> <br />
-                    <strong>Dev e Professora</strong> </p>
+    if (!String.IsNullOrEmpty(searchString))
+    {
+        movies = movies.Where(s => s.Title!.Contains(searchString));
+    }
 
-                    <p>Trabalho com desenvolvimento Web desde 2010.</p>
-
-                    <p>Sou apaixonada por transformar ideias em realidade digital.</p>
-
-                    <p>Fico muito orgulhosa em testemunhar a evolução pessoal e profissional de cada aluno</p>
-                </div>
-            </div>
-
-            <div className={styles.techs}>
-                <h3>Techs</h3>
-                <div className={styles.icones}>
-                    <img src={html} alt="Ícone do html" />
-                    <img src={css} alt="Ícone do css" />
-                    <img src={js} alt="Ícone do js" />
-                    <img src={react} alt="Ícone do react" />
-                    <img src={node} alt="Ícone do node" />
-                    <img src={sql} alt="Ícone do sql" />
-                </div>
-            </div>
-
-        </section>
-    )
-}
-
-export default Sobre
-
-
-~~~
-
-6. Salve as alterações.
-
-## CSS da Página Sobre
-
-1. Abra o arquivo Sobre.module.css
-2. Faça o seguinte código:
-
-~~~css
-
-.sobre {
-    width: 100%;
-    min-height: 85vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.bio {
-    display: flex;
-    align-items: center;
-    gap: 3rem;
-    margin-bottom: 1.5rem;
-}
-
-.bio span {
-    color: var(--red);
-    font-weight: bold;
-}
-
-.bio strong {
-    color: var(--secondary);
-    font-weight: bold;
-}
-
-.textos h2, p {
-    margin-bottom: 1rem;
-}
-
-.techs {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-}
-
-.icones {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-}
-
-.icones img {
-    height: 50px;
+    return View(await movies.ToListAsync());
 }
 
 ~~~
 
-3. Salve as alterações e veja o resultado no browser.
+A linha a seguir do método de ação Index cria uma consulta LINQ para selecionar os filmes:
+
+~~~ c #
+
+var movies = from m in _context.Movie
+             select m;
+
+~~~
+
