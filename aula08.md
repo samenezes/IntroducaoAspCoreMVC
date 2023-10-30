@@ -1,136 +1,180 @@
-# Aula 08 Componente Card de Projetos
+# Adicionar um novo campo a um aplicativo ASP.NET Core MVC
 
-## Criar Componente Card
+As Migrações do Entity Framework Code First são usadas para:
 
-1. Dentro da pasta `components` crie a pasta Card
-2. Dentro de `Card` crie os arquivos `index.jsx` e `Card.module.css`
-3. Abra o arquivo `index.jsx` de Card
-4. Faça o seguinte código:
+ 1. Adicionar um novo campo ao modelo.
+ 2. Migrar o novo campo para o banco de dados.
 
-~~~javascript
+# Ao usar o Code First do EF para criar automaticamente um banco de dados, o Code First:
 
-import styles from './Card.module.css'
-import { FaHtml5, FaCss3Alt, FaJs, FaReact } from 'react-icons/fa'
-import { BsArrowRight } from 'react-icons/bs'
+ 1. Adiciona uma tabela ao banco de dados para rastrear o esquema do banco de dados.
+ 2. Verifica se o banco de dados está em sincronia com as classes de modelo das quais foi gerado. Se ele não estiver sincronizado, o EF gerará uma exceção.
+    Isso facilita a descoberta de problemas de código/banco de dados inconsistente.
+    
 
-function Card() {
-    return (
-        <section className={styles.card}>
-            <h3>Título do projeto</h3>
-            <p>Texto descritivo do projeto.</p>
-            <div className={styles.card_footer}>
-                <div className={styles.card_icones}>
-                    <FaHtml5 />
-                    <FaCss3Alt />
-                    <FaJs />
-                    <FaReact />
-                </div>
-                <button className={styles.botao}>
-                    <BsArrowRight />
-                </button>
-            </div>
-        </section>
-    )
-}
+## Adicionar uma Propriedade de Classificação ao Modelo de Filme
 
-export default Card
+Adiciona uma propriedade Rating a Models/Movie.cs:
 
-~~~
+~~~ c #
 
-5. Salve as alterações.
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-## Como usar o Card na Página Projetos
+namespace MvcMovie.Models;
 
-1. Abrir o arquivo `index.jsx`
-2. Abaixo do título h3 adicione o componente Card:
+public class Movie
+{
+    public int Id { get; set; }
+    public string? Title { get; set; }
 
-~~~javascript
-
-import Card from '../../components/Card'
-
-function Projetos() {
-    return (
-        <>
-            <h2>Projetos</h2>
-            <Card />
-            <Card />
-            <Card />
-        </>
-    )
-}
-
-export default Projetos
-
-~~~
-3. Não se esqueça de fazer o import do componente Card
-4. Salve as alterações e veja o resultado no browser.
-
-
-## CSS de Card dos Projetos
-
-1. Abra o arquivo Card.module.css
-2. Faça o seguinte código:
-
-~~~css
-
-.card {
-    width: 300px;
-    height: 300px;
-    background-color: var(--soft-white);
-    color: var(--gray);
-    border-radius: 8px;
-    box-shadow: 5px 5px 10px #22222270;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.card h3 {
-    color: var(--primary);
-}
-
-.card p {
-    color: #555;
-}
-
-.card_footer {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.card_icones {
-    display: flex;
-    gap: 10px;
-    color: var(--red);
-    font-size: 1.5rem;
-}
-
-.botao {
-    width: 40px;
-    height: 40px;
-    border: 0;
-    border-radius: 8px;
-    background-color: var(--primary);
-    color: var(--white);
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.botao:hover {
-    background-color: var(--red);
-    transition: all .5s;
+    [Display(Name = "Release Date")]
+    [DataType(DataType.Date)]
+    public DateTime ReleaseDate { get; set; }
+    public string? Genre { get; set; }
+    
+    [Column(TypeName = "decimal(18, 2)")]
+    public decimal Price { get; set; }
+    public string? Rating {  get; set; }  // essa linha
 }
 
 ~~~
 
-Salve as alterações e veja o resultado no browser.
+## Criar o aplicativo
 
-> Nas próximas aulas vamos organizar a página Projetos para exibir melhor a lista de Card de projetos.
+Ctrl+Shift+B
 
+Como adicionou um novo campo à classe Movie, você também precisará atualizar a lista de permissões de associação para que essa nova propriedade seja incluída. 
+Em MoviesController.cs, atualize o atributo [Bind] dos métodos de ação Create e Edit para incluir a propriedade Rating:
+
+~~~ c #
+[Bind("Id,Title,ReleaseDate,Genre,Price,Rating")]
+~~~
+
+Atualize os modelos de exibição para exibir, criar e editar a nova propriedade Rating na exibição do navegador.
+
+Edite o arquivo /Views/Movies/Index.cshtml e adicione um campo Rating:
+
+~~~ cshtml #
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Movies![0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Movies![0].ReleaseDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Movies![0].Genre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Movies![0].Price)
+            </th>
+            <th>                                                             //essa linha
+                @Html.DisplayNameFor(model => model.Movies![0].Rating)       //essa linha
+            </th>                                                            //essa linha
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Movies!)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReleaseDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Genre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>                                                //essa linha
+                    @Html.DisplayFor(modelItem => item.Rating)      //essa linha 
+                </td>                                               //essa linha
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+~~~
+
+Atualize o /Views/Movies/Create.cshtml com um campo Rating.
+
+Copie/cole o “grupo de formulário” anterior e permita que o IntelliSense ajude você a atualizar os campos. 
+O IntelliSense funciona com os Auxiliares de Marcação.
+
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/cf220cd6-5d5e-4461-91cf-6f23c39019ba)
+
+Atualize os modelos restantes.
+
+Atualize a classe SeedData para que ela forneça um valor para a nova coluna.
+Uma alteração de amostra é mostrada abaixo, mas é recomendável fazer essa alteração em cada new Movie.
+
+~~~ c #
+
+new Movie
+{
+    Title = "When Harry Met Sally",
+    ReleaseDate = DateTime.Parse("1989-1-11"),
+    Genre = "Romantic Comedy",
+    Rating = "R",       //essa linha
+    Price = 7.99M
+},
+
+~~~
+
+
+O aplicativo não funcionará até que o BD seja atualizado para incluir o novo campo. Se ele tiver sido executado agora, o seguinte SqlException será gerado:
+
+SqlException: Invalid column name 'Rating'.
+
+Este erro ocorre porque a classe de modelo Movie atualizada é diferente do esquema da tabela Movie do banco de dados existente. (Não há nenhuma coluna Rating na tabela de banco de dados.)
+
+Existem algumas abordagens para resolver o erro:
+
+Faça com que o Entity Framework remova automaticamente e recrie o banco de dados com base no novo esquema de classe de modelo. 
+Essa abordagem é muito conveniente no início do ciclo de desenvolvimento, quando você está fazendo o desenvolvimento ativo em um banco de dados de teste. 
+Ela permite que você desenvolva rapidamente o modelo e o esquema de banco de dados juntos.
+No entanto, a desvantagem é que você perde os dados existentes no banco de dados – portanto, você não deseja usar essa abordagem em um banco de dados de produção! 
+Muitas vezes, o uso de um inicializador para propagar um banco de dados com os dados de teste automaticamente é uma maneira produtiva de desenvolver um aplicativo.
+Isso é uma boa abordagem para o desenvolvimento inicial e ao usar o SQLite.
+
+Modifique explicitamente o esquema do banco de dados existente para que ele corresponda às classes de modelo. 
+A vantagem dessa abordagem é que você mantém os dados. Faça essa alteração manualmente ou criando um script de alteração de banco de dados.
+
+Use as Migrações do Code First para atualizar o esquema de banco de dados.
+
+Para este tutorial, as Migrações do Code First são usadas.
+
+No menu Ferramentas, selecione Gerenciador de Pacotes NuGet > Console do Gerenciador de Pacotes.
+
+![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/bb32ab69-48c6-4270-b762-f260c51822ef)
+
+No PMC, insira os seguintes comandos:
+
+~~~ powershell #
+
+Add-Migration Rating
+Update-Database
+
+~~~
+O comando Add-Migration informa a estrutura de migração para examinar o atual modelo Movie com o atual esquema de BD Movie e criar o código necessário para migrar o BD para o novo modelo.
+
+O nome “Classificação” é arbitrário e é usado para nomear o arquivo de migração.
+É útil usar um nome significativo para o arquivo de migração.
+
+Se você excluir todos os registros do BD, o método de inicialização propagará o BD e incluirá o campo Rating.
+
+Execute o aplicativo e verifique se você pode criar, editar e exibir filmes com um campo Rating.
