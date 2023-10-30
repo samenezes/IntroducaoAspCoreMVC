@@ -61,7 +61,7 @@ No painel esquerdo, selecione Instalado>Comum>MVC.
 Selecione Controlador MVC com exibições, usando o Entity Framework.
 Selecione Adicionar.
 
-## NA REDE DO COTEMIG NÃO IRÁ APARECER A OPÇÃO DE SQL, CONFORME IMAGEM ABAIXO, PORTANTO NÃO SE PREOCUPE EM SELECIONAR SQL SERVER, NÃO IRÁ DAR ERRO.
+
 
 ![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/b7475cf9-d1ce-4d1a-b10b-a26077cb24b1)
 
@@ -74,6 +74,8 @@ Selecione Adicionar.
 Na lista suspensa Provedor de banco de dados, selecione SQL Server.
 Exibições e Nome do controlador: mantenha o padrão.
 Selecione Adicionar.
+
+## NA REDE DO COTEMIG NÃO IRÁ APARECER A OPÇÃO DE SQL, CONFORME IMAGEM ABAIXO, PORTANTO NÃO SE PREOCUPE EM SELECIONAR SQL SERVER, NÃO IRÁ DAR ERRO.
 
 ![image](https://github.com/samenezes/IntroducaoAspCoreMVC/assets/61150892/2cd37efd-a5ea-4a24-af71-ae5d3159faa9)
 
