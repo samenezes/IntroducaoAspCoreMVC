@@ -15,7 +15,7 @@ Você aprenderá como:
 3. •	Na caixa de diálogo Configurar seu novo projeto, insira MvcMovie no Nome do projeto. É importante nomear o projeto MvcMovie. O uso de maiúsculas e minúsculas precisa corresponder a cada namespace quando o código é copiado.
 4. •	Selecione Avançar.
 5. •	Na caixa de diálogo Informações adicionais:
-o	Selecionar o .NET 7.0.
+o	Selecionar o .NET 8.0.
 o	Verifique se Não usar instruções de nível superior está desmarcado.
 6.	Selecione Criar.
 
